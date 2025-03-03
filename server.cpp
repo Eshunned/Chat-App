@@ -5,12 +5,11 @@
 #include <mutex>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <algorithm>
-#include <cstring>
+#include <cstring>  // <-- Fixes 'memset' error
+#include <algorithm> // <-- Fixes 'remove' error
 
 #define PORT 9090
 #define BUFFER_SIZE 1024
-
 
 std::vector<int> clients;
 std::mutex clients_mutex;
@@ -25,7 +24,7 @@ void broadcast(const std::string &message, int sender_fd) {
     }
 }
 
-// Function to handle each client
+// Function to handle individual clients
 void handle_client(int client_socket) {
     char buffer[BUFFER_SIZE];
     while (true) {
@@ -34,12 +33,9 @@ void handle_client(int client_socket) {
         if (bytes_received <= 0) {
             break;
         }
-
-        std::string client_message = buffer;
-        std::cout << "Client " << client_socket << ": " << client_message << std::endl;
-
-        std::string formatted_message = "Client " + std::to_string(client_socket) + ": " + client_message;
-        broadcast(formatted_message, client_socket);
+        std::string message = "Client " + std::to_string(client_socket) + ": " + std::string(buffer);
+        std::cout << message << std::endl;
+        broadcast(message, client_socket);
     }
 
     // Remove client from list
@@ -47,7 +43,6 @@ void handle_client(int client_socket) {
         std::lock_guard<std::mutex> lock(clients_mutex);
         clients.erase(std::remove(clients.begin(), clients.end(), client_socket), clients.end());
     }
-
     close(client_socket);
 }
 
@@ -61,9 +56,6 @@ int main() {
         std::cerr << "Failed to create socket\n";
         return -1;
     }
-
-    int opt = 1;
-    setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
@@ -79,7 +71,7 @@ int main() {
         return -1;
     }
 
-    std::cout << "Chat Server running on port " << PORT << "...\n";
+    std::cout << "Server is running on port " << PORT << "...\n";
 
     while (true) {
         client_socket = accept(server_socket, (struct sockaddr *)&client_addr, &addr_len);

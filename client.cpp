@@ -5,11 +5,11 @@
 #include <unistd.h>
 #include <cstring>
 
-#define SERVER_IP "192.168.0.102"
+#define SERVER_IP "127.0.0.1"
 #define PORT 9090
 #define BUFFER_SIZE 1024
 
-// Function to receive messages from the server
+// Function to receive messages from server
 void receive_messages(int client_socket) {
     char buffer[BUFFER_SIZE];
     while (true) {
