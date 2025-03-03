@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <cstring>
 
-#define SERVER_IP "127.0.0.1"
+#define SERVER_IP "192.168.0.102"
 #define PORT 9090
 #define BUFFER_SIZE 1024
 
