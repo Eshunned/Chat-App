@@ -10,6 +10,8 @@
 
 #define PORT 9090
 #define BUFFER_SIZE 1024
+#define SERVER_IP "192.168.0.102"
+
 
 std::vector<int> clients;
 std::mutex clients_mutex;
